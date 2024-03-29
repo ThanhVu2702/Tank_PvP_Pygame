@@ -19,6 +19,76 @@ msg =""
 
 
 
+def player_classes(option,player):
+    '''
+    Để thêm thuộc tính vào player.sprite dựa trên loại xe tăng mà người dùng đã chọn (player1 hoặc player2), 
+    chương trình sẽ kiểm tra loại xe tăng đó và thêm các thuộc tính tương ứng. 
+    Điều này sẽ giúp xác định các đặc điểm cụ thể của từng loại xe tăng và áp dụng chúng vào sprite của người chơi.
+    '''
+    if option == 0: #tank 1 có tốc độ bắn và di chuyển nhanh hơn, nhưng có lượng máu thấp hơn
+
+        player.cooldown = 30 #Giảm cooldown để bắn nhanh hơn
+        player.health = 3  
+        player.speed = 5
+        player.pics = ver1 # ảnh dùng cho xe tăng loại 1
+        player.image = ver1[0] # Ảnh hiển thị đầu tiên cho xe tăng loại 1
+
+    elif option == 1: #tank 2 có tốc độ bắn và di chuyển chậm, nhưng nhiều máu 
+        player.cooldown = 45
+        player.health = 6
+        player.speed = 3
+        player.pics = ver2
+        player.image = ver2[0]
+
+############### SET UP DI CHUYỂN CỦA TANK #######################
+def movement(player):
+    
+    '''
+   di chuyển trong trò chơi phụ thuộc vào phím được bấm
+   xử lý đầu vào từ bàn phím để di chuyển tank theo các hướng, ngăn tank đi xuyên tường, đi xuyên player khác
+    '''
+    key = pygame.key.get_pressed()
+    #tạo ra một cơ chế di chuyển liên tục cho sprite mà không bị gián đoạn khi người chơi giữ phím 
+    #đồng thời đề cập đến cách xử lý va chạm để ngăn sprite không di chuyển qua các vật thể khác.
+
+
+    if key[player.keys[0]]:
+        player.rect.left -= player.speed # Di chuyển sprite sang trái theo tốc độ đã định
+        player.direction = 'left' # Cập nhật hướng di chuyển của sprite
+        player.image = player.pics[3] # Cập nhật hình ảnh của sprite khi người chơi hướng di chuyển sang trái
+
+
+    elif key[player.keys[1]]:
+        player.rect.left += player.speed
+        player.direction = 'right'
+        player.image = player.pics[2]
+
+    elif key[player.keys[2]]:
+        player.rect.top -= player.speed
+        player.direction = 'up'
+        player.image = player.pics[0]
+
+    elif key[player.keys[3]]:
+        player.rect.top += player.speed
+        player.direction = 'down'
+        player.image = player.pics[1]
+
+
+    if len(pygame.sprite.spritecollide(player,players,False))> 1 or pygame.sprite.spritecollide(player,walls,False):
+    #Trong trường hợp "player" nằm trong nhóm sprite "players", chúng ta cần kiểm tra xem có va chạm với đối tượng khác trong nhóm hay không bằng cách xem độ dài của danh sách va chạm có lớn hơn 1 không. Nếu độ dài này lớn hơn 1, điều này có nghĩa là đã có va chạm với một "player" khác.
+    #Hàm collidelist sẽ trả về -1 nếu không có va chạm nào. Vì vậy, nếu giá trị trả về khác -1, điều đó cho biết "player" đã va chạm vào 1 khối tuong.
+    
+
+        if player.direction == 'left':
+            player.rect.left += player.speed
+        if player.direction == 'right':
+            player.rect.left -= player.speed
+        if player.direction == 'up':
+            player.rect.top += player.speed
+        if player.direction == 'down':
+            player.rect.top -= player.speed
+
+
 ################################## SET UP MENU GAME #############################################################################   
 def gameMenu(thisStage):
     '''
