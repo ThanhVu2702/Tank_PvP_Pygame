@@ -24,7 +24,7 @@ def writeScorefile():
     # mô tả về việc tạo ra một tệp
     '''
    Để bắt đầu, nhóm sẽ kiểm tra xem có tệp điểm số nào tồn tại bằng cách thử mở nó. 
-   Nếu không thể mở tệp, cho thấy tệp đó không tồn tại, nhóm sẽ tạo một tệp mới. 
+   Nếu không thể mở tệp, cho thấy tệp đó không tồn tại, nhóm sẽ tạo một tệp mới.
    Trong trường hợp này, tệp mới sẽ được tạo ra và được đặt tiêu đề như "Tên Người Chơi, Điểm Số". 
    Nếu tệp điểm số đã tồn tại, quá trình kiểm tra sẽ kết thúc.
     '''
