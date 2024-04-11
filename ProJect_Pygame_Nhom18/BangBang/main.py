@@ -37,7 +37,7 @@ class App(QWidget):
         self.sound.play()
         
         # Tạo 3 button
-        btn1 = QPushButton('Tank PvP', self)
+        btn1 = QPushButton('Tank PvP Online', self)
         btn1.move(90, 370)
         btn1.setStyleSheet("QPushButton:hover { background-color: red }") #đổi màu nền button
         btn1.clicked.connect(self.on_click_game)
@@ -47,9 +47,9 @@ class App(QWidget):
         btn2.setStyleSheet("QPushButton:hover { background-color: yellow }")
         btn2.clicked.connect(self.on_click_game)
         
-        btn3 = QPushButton('Thoát', self)
+        btn3 = QPushButton('Tank PvP Offline', self)
         btn3.move(510, 370)
-        btn3.clicked.connect(self.on_click_exit)
+        btn3.clicked.connect(self.on_click_game)
         
         self.show()
     
@@ -58,10 +58,12 @@ class App(QWidget):
         self.sound.stop()
         sender = self.sender()
         game_process = None
-        if sender.text() == 'Tank PvP':
+        if sender.text() == 'Tank PvP Online':
             game_process = subprocess.Popen(['python', 'ProJect_Pygame_Nhom18/BangBang/Tank2P/TankPvP.py'])
-        elif sender.text() == 'Crazy Tank':
+        if sender.text() == 'Crazy Tank':
             game_process = subprocess.Popen(['python', 'ProJect_Pygame_Nhom18/BangBang/CrazyTank.py'])
+        elif sender.text() == 'Tank PvP Offline':
+            game_process = subprocess.Popen(['python', 'ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/TankPvP.py'])
         
         game_process.wait()  # đợi ta thoát game
         self.sound.play()  # Phát lại nhạc nền
