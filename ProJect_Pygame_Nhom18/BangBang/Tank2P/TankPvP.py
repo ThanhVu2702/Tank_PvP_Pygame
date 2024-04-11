@@ -4,18 +4,36 @@ import random
 import time
 import socket
 import threading
+import time
 
 pygame.init()
 
 
 s = socket.socket()
-host = "127.0.0.1"
+host = "192.168.46.105"
 port = 9999
 playerOne = 1
 playerTwo = 2
 bottomMsg = ""
 currentPlayer = 0
 msg =""
+
+def create_thread(target):
+    t = threading.Thread(target = target) #argument - target function
+    t.daemon = True
+    t.start()
+    print("Created thread")
+
+def receive_msg():
+    global msg
+    while True:
+        try:
+            recvData = s.recv(2048 * 10)
+            msg = recvData.decode()
+            print("Receive form "+str(currentPlayer)+" :", msg)
+        except socket.error as e:
+            print("Socket connection error:", e)
+            break
 
 
 
@@ -68,6 +86,7 @@ def player_classes(option,player):
 
 ############### SET UP DI CHUYỂN CỦA TANK #######################
 def movement(player):
+
     
     '''
    di chuyển trong trò chơi phụ thuộc vào phím được bấm
@@ -77,28 +96,39 @@ def movement(player):
     #tạo ra một cơ chế di chuyển liên tục cho sprite mà không bị gián đoạn khi người chơi giữ phím 
     #đồng thời đề cập đến cách xử lý va chạm để ngăn sprite không di chuyển qua các vật thể khác.
 
-
+        
+        
     if key[player.keys[0]]:
-        player.rect.left -= player.speed # Di chuyển sprite sang trái theo tốc độ đã định
-        player.direction = 'left' # Cập nhật hướng di chuyển của sprite
-        player.image = player.pics[3] # Cập nhật hình ảnh của sprite khi người chơi hướng di chuyển sang trái
+            player.rect.left -= player.speed # Di chuyển sprite sang trái theo tốc độ đã định
+            player.direction = 'left' # Cập nhật hướng di chuyển của sprite
+            player.image = player.pics[3] # Cập nhật hình ảnh của sprite khi người chơi hướng di chuyển sang trái
+            data = "LEFT" + str(player.rect.left)
+            s.sendall(data.encode('utf-8'))
+           
 
 
     elif key[player.keys[1]]:
-        player.rect.left += player.speed
-        player.direction = 'right'
-        player.image = player.pics[2]
-
+            player.rect.left += player.speed
+            player.direction = 'right'
+            player.image = player.pics[2]
+            data = "RIGHT" + str(player.rect.left)
+            s.sendall(data.encode('utf-8'))
     elif key[player.keys[2]]:
-        player.rect.top -= player.speed
-        player.direction = 'up'
-        player.image = player.pics[0]
+            player.rect.top -= player.speed
+            player.direction = 'up'
+            player.image = player.pics[0]
+            data = "UP" + str(player.rect.top)
+            s.sendall(data.encode('utf-8'))
+            
 
     elif key[player.keys[3]]:
-        player.rect.top += player.speed
-        player.direction = 'down'
-        player.image = player.pics[1]
+            player.rect.top += player.speed
+            player.direction = 'down'
+            player.image = player.pics[1]
+            data = "DOWN" + str(player.rect.top)
+            s.sendall(data.encode('utf-8'))
 
+        
 
     if len(pygame.sprite.spritecollide(player,players,False))> 1 or pygame.sprite.spritecollide(player,walls,False):
     #Trong trường hợp "player" nằm trong nhóm sprite "players", chúng ta cần kiểm tra xem có va chạm với đối tượng khác trong nhóm hay không bằng cách xem độ dài của danh sách va chạm có lớn hơn 1 không. Nếu độ dài này lớn hơn 1, điều này có nghĩa là đã có va chạm với một "player" khác.
@@ -114,6 +144,10 @@ def movement(player):
         if player.direction == 'down':
             player.rect.top -= player.speed
 
+
+
+           
+            
 ################################### SET UP VỊ TRÍ MÁU CỦA PLAYER TRONG TRẬN CHIẾN ###############################################################################
 def drawPlayerHealth(player):
     #Hàm này cập nhật và in số máu của người chơi khi ở chế độ chiến đấu
@@ -193,10 +227,13 @@ def readMap():
     chọn một map từ tệp, đọc và phân tích từng dòng của nó, nơi mỗi ô trong tệp cách nhau bởi dấu phẩy,dấu chấm ('.') đại diện cho các tile (tường) 
     Khi đọc mỗi ô, phương pháp này gán hình ảnh tường cho mỗi ô và có thể tiến hành chỉnh sửa ô nếu cần thiết
     '''
-    Map = open(random.choice(maps), 'r') #Mở một file bản đồ ngẫu nhiên từ danh sách maps với quyền đọc ('r').
-    
+
+  
+    # Map = open(random.choice(maps), 'r') #Mở một file bản đồ ngẫu nhiên từ danh sách maps với quyền đọc ('r').
+    Map = open(maps[0], 'r')
     x = 0 # kiểm soát vị trí x và y trên bản đồ khi đặt các tiles
     y = 0
+
 
     '''
     tạo ra một bức tường từ các tiles có kích thước 12x12 pixel, biểu diễn bởi các dấu chấm trong tệp đầu vào.
@@ -305,11 +342,9 @@ def gameMenu(thisStage):
                         end = False
                         thisStage = False
 
-def create_thread(target):
-    t = threading.Thread(target = target) #argument - target function
-    t.daemon = True
-    t.start()
+
 def selectionScreen(thisStage):
+    global currentPlayer
     global msg
     #shows menu, cửa sổ màn hình đầu tiên khi vào gaem
     '''
@@ -352,25 +387,14 @@ def selectionScreen(thisStage):
     DisplaySurf2 = pygame.Surface((80,80))
     DisplaySurf2.fill((255,212,255))
 
-    def receive_msg():
-        
-        global msg
-        while True:
-            try:
-                recvData = s.recv(2048 * 10)
-                msg = recvData.decode()
-                print("Receive form "+str(currentPlayer)+" :", msg)
-            except socket.error as e:
-                print("Socket connection error:", e)
-                break
+   
             
-      
-
 
     try:
         s.connect((host, port))
         print("Connected to :", host, ":", port)
         recvData = s.recv(2048 * 10)
+        print("Receive from server: ", recvData.decode())
         bottomMsg = recvData.decode()
         if "1" in bottomMsg:
             currentPlayer = 1
@@ -380,19 +404,20 @@ def selectionScreen(thisStage):
 
         else:
             currentPlayer =2
-            print( "You are player 1")
+            print( "You are player 2")
             Title2 = my_font4.render('You are player 2', True, (9,255,242))
             screen.blit(Title2, (170, 120)) # tọa độ dòng chữ Select Tank
 
             # s.close()
     except socket.error as e:
-        print("Socket connection error:", e) 
+        Title2 = my_font4.render('server error', True, (9,255,242))
+        screen.blit(Title2, (170, 120)) # tọa độ dòng chữ Select Tank 
 
     create_thread(receive_msg)
 
+    
 
     while thisStage:
-        
         for ev in pygame.event.get():
             if ev.type == QUIT:
                 pygame.mixer.music.stop()
@@ -401,14 +426,13 @@ def selectionScreen(thisStage):
                 battling = False
                 end = False
                 thisStage = False
-                s.close()
             elif ev.type == KEYDOWN:
                 if ev.key == K_RETURN: #Khi nhấn phím ENTER, dừng âm nhạc, gọi hàm readMap() để tải bản đồ, sau đó gọi hàm player_classes() với Opt1 và player1, rồi Opt2 và player2; thiết lập selecting và thisStage thành False để chuyển sang giai đoạn khác.
                     pygame.mixer.music.stop()
                     readMap()
                     player_classes(Opt1, player1)
                     player_classes(Opt2, player2)
-                    
+                    s.sendall("Play".encode('utf-8'))
                     selecting = False
                     thisStage = False
 
@@ -450,30 +474,46 @@ def selectionScreen(thisStage):
                             Opt2 += 1
                         s.sendall(data.encode('utf-8'))
 
-            if msg == "":
-                break
-            if "A" in msg:
+            
+        if "A" in msg:
                 if currentPlayer == 1:
                     print("Player "+ str(currentPlayer)+" di chuyen ",msg )
-                    screen.blit(options[1], (415, 220))
-                    instruction = my_font4.render('User 2 click A', True, (255,255,0))
+                    if Opt2 == 0:
+                            Opt2 = 1                                   
+                    else:
+                        Opt2 -= 1
                     msg = ""
                 else:
                     print("Player "+ str(currentPlayer)+" di chuyen ",msg )
-                    screen.blit(options[0], (415, 220))
-                    instruction = my_font4.render('User 1 click A', True, (255,255,0))
+                    if Opt1 == 0:
+                            Opt1 = 1                                   
+                    else:
+                        Opt1 -= 1
                     msg = ""
-            if "D" in msg:
+        if "D" in msg:
                 if currentPlayer == 1:
                     print("Player "+ str(currentPlayer)+" di chuyen ",msg )
-                    screen.blit(options[1], (415, 220))
-                    instruction = my_font4.render('User 2 click D', True, (255,255,0))
+                    if Opt2 == 1:
+                            Opt2 = 0
+                    else:
+                        Opt2 += 1
                     msg = ""
                 else:
                     print("Player "+ str(currentPlayer)+" di chuyen ",msg )
-                    screen.blit(options[0], (415, 220))
-                    instruction = my_font4.render('User 1 click D', True, (255,255,0))
+                    if Opt1 == 1:
+                            Opt1 = 0
+                    else:
+                        Opt1 += 1
                     msg = ""
+        if "Play" in msg:
+                pygame.mixer.music.stop()
+                readMap()
+                player_classes(Opt1, player1)
+                player_classes(Opt2, player2)
+                selecting = False
+                thisStage = False
+
+                
                 
 
 
@@ -519,6 +559,7 @@ def distance(point1, point2):
     return math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
 
 def battleScreen(thisStage):
+
     '''
     quản lý màn hình chiến đấu trong game bằng cách xử lý các sự kiện, di chuyển, 
     cập nhật trạng thái đạn, xử lý va chạm, và hiển thị các đối tượng trên màn hình, kết thúc trò chơi khi người chơi hết máu.
@@ -528,9 +569,89 @@ def battleScreen(thisStage):
     pygame.mixer.music.set_volume(0.4)
     pygame.mixer.music.play(-1)
     
+    global msg
     timer = 0  #Khởi tạo biến đếm để điều chỉnh thời gian nghỉ giữa các lần bắn của người chơi
     timer2 = 0
-    
+    msg = ""
+
+    def updatePlayer(player):
+        global msg
+        if msg =="": return
+        if "LEFT" in msg:
+            data = msg.split("LEFT")
+            for i in range(len(data)-1):
+                player.rect.left -= player.speed# Di chuyển sprite sang trái theo tốc độ đã định
+                player.direction = 'left' # Cập nhật hướng di chuyển của sprite
+                player.image = player.pics[3] # Cập nhật hình ảnh của sprite khi người chơi hướng di chuyển sang trái
+                players.draw(screen)
+                pygame.display.update()
+            if data[len(data)-1].isdigit():
+                if player.rect.left!= int(data[len(data)-1]):
+                    player.rect.left = int(data[len(data)-1])
+               
+            msg = ""
+            players.draw(screen)
+            pygame.display.update()
+
+        elif "RIGHT" in msg:
+            data = msg.split("RIGHT")
+            for i in range(len(data)-1):
+                player.rect.left += player.speed
+                player.direction = 'right'
+                player.image = player.pics[2]
+                
+            if data[len(data)-1].isdigit():
+                if player.rect.left!= int(data[len(data)-1]):
+                    player.rect.left = int(data[len(data)-1])
+            msg = ""
+            players.draw(screen)
+            pygame.display.update()
+           
+
+        elif "UP" in msg:
+            data = msg.split("UP")
+            for i in range(len(data)-1):
+                player.rect.top -= player.speed
+                player.direction = 'up'
+                player.image = player.pics[0]
+                players.draw(screen)
+            if data[len(data)-1].isdigit():
+                print("Top" + str(player.rect.top))
+                if player.rect.top!= int(data[len(data)-1]):
+                    player.rect.top = int(data[len(data)-1])
+            msg = ""
+            players.draw(screen)
+            pygame.display.update()
+        elif "DOWN" in msg:
+            data = msg.split("DOWN")
+            for i in range(len(data)-1):
+                player.rect.top += player.speed
+                player.direction = 'down'
+                player.image = player.pics[1]
+                players.draw(screen)
+                pygame.display.update()
+            if data[len(data)-1].isdigit():
+                print("Top" + str(player.rect.top))
+                if player.rect.top!= int(data[len(data)-1]):
+                    player.rect.top = int(data[len(data)-1])
+            msg = ""
+            players.draw(screen)
+            pygame.display.update()
+
+
+        if len(pygame.sprite.spritecollide(player,players,False))> 1 or pygame.sprite.spritecollide(player,walls,False):
+        #Trong trường hợp "player" nằm trong nhóm sprite "players", chúng ta cần kiểm tra xem có va chạm với đối tượng khác trong nhóm hay không bằng cách xem độ dài của danh sách va chạm có lớn hơn 1 không. Nếu độ dài này lớn hơn 1, điều này có nghĩa là đã có va chạm với một "player" khác.
+        #Hàm collidelist sẽ trả về -1 nếu không có va chạm nào. Vì vậy, nếu giá trị trả về khác -1, điều đó cho biết "player" đã va chạm vào 1 khối tuong.
+            if player.direction == 'left':
+                player.rect.left += player.speed
+            if player.direction == 'right':
+                player.rect.left -= player.speed
+            if player.direction == 'up':
+                player.rect.top += player.speed
+            if player.direction == 'down':
+                player.rect.top -= player.speed
+   
+
     while thisStage:
         fps = clock.tick(30)  #điều chỉnh fps giúp game mượt hơn      
         timer += 1  #Mỗi vòng lặp, timer và timer2 tăng lên 1, giúp đếm số lần lặp xảy ra và có thể dùng để kiểm soát thời gian nghỉ giữa các lần bắn
@@ -539,12 +660,22 @@ def battleScreen(thisStage):
             if ev.type == QUIT:
                 pygame.mixer.music.stop()
                 run = False
+                s.close()
+
                 battling = False
                 thisStage = False
                 end = False
-                
-        movement(player1)    #xử lý di chuyển, va chạm (p1-p2-tường)
-        movement(player2) 
+
+    
+       
+
+        if currentPlayer == 1:
+            movement(player1)
+        else:
+            movement(player2)
+
+        # xử lý di chuyển, va chạm (p1-p2-tường)
+        # movement(player2) 
         bullet_update()
         key = pygame.key.get_pressed() #kiêmr tra các phím được nhấn
 
@@ -552,18 +683,33 @@ def battleScreen(thisStage):
         #Khi người chơi nhấn phím bắn sau hết thời gian cooldown của lần bắn trước, hệ thống sẽ phát âm thanh bắn và tạo viên đạn mới cho người chơi đó
         #Bộ đếm thời gian (timer cho người chơi 1 và timer2 cho người chơi 2) sẽ được đặt lại về 0 để chuẩn bị cho lần bắn tiếp theo
 
-        if key[player1.keys[4]]:
-            if timer >= player1.cooldown:  
-                shoot.play()
-                bullet(player1)
-                timer = 0
+        if currentPlayer == 1:
+            if key[player1.keys[4]]:
+                if timer >= player1.cooldown:  
+                    shoot.play()
+                    bullet(player1)
+                    timer = 0
+                    s.sendall("SHOT".encode('utf-8'))
+           
+        else:
+            if key[player2.keys[4]]:
+                if timer2 >= player2.cooldown:
+                    shoot.play()
+                    bullet(player2)
+                    timer2 = 0
+                    s.sendall("SHOT".encode('utf-8'))
+            
 
-        if key[player2.keys[4]]:
-            if timer2 >= player2.cooldown:
-                shoot.play()
-                bullet(player2)
-                timer2 = 0
+
+
+        # if key[player2.keys[4]]:
+        #     if timer2 >= player2.cooldown:
+        #         shoot.play()
+        #         bullet(player2)
+        #         timer2 = 0
                 
+        
+
         for bullets in bulletgroup: 
             
             if pygame.sprite.collide_rect(bullets,player1): #check viên đạn có trúng p1 không
@@ -598,6 +744,20 @@ def battleScreen(thisStage):
                 pygame.sprite.spritecollide(bullets,bulletgroup, True)
 
 
+        if currentPlayer ==1: updatePlayer(player2)
+        else: updatePlayer(player1)
+        if "SHOT" in msg:
+            if currentPlayer == 1:
+                msg = ""
+                shoot.play()
+                bullet(player2)
+                timer2 = 0
+            else:
+                msg = ""
+                shoot.play()
+                bullet(player1)
+                timer1 = 0
+            
         screen.blit(background, (0,0)) #in background đè lên toàn bộ screen
         walls.draw(screen)
         players.draw(screen)
@@ -739,12 +899,12 @@ players = pygame.sprite.Group()
 player1 = pygame.sprite.Sprite()
 player1.rect = pygame.Rect((20, 20),(24,24))                        
 player1.direction = 'up'                                            
-player1.keys = (K_a, K_d, K_w, K_s,K_4)    # Player 1 sử dụng phím W A S D để di chuyển và phím bắn đạn là phím 4                   
+player1.keys = (K_a, K_d, K_w, K_s,K_r)    # Player 1 sử dụng phím W A S D để di chuyển và phím bắn đạn là phím 4                   
 
 player2 = pygame.sprite.Sprite()
 player2.rect = pygame.Rect((560, 390), (24,24))
 player2.direction = 'up'
-player2.keys = (K_LEFT, K_RIGHT, K_UP, K_DOWN,K_l) # Player 2 sử dụng phím LEFT RIGHT UP DOWN để di chuyển và phím bắn đạn là phím l
+player2.keys = (K_a, K_d, K_w, K_s,K_r) # Player 2 sử dụng phím LEFT RIGHT UP DOWN để di chuyển và phím bắn đạn là phím l
 
 players.add(player1) #phương thức add thêm player 1 & 2 vào nhóm player
 players.add(player2)
