@@ -4,7 +4,7 @@ import time
 import threading
 
 s = socket.socket()
-host = "192.168.46.105"
+host = "127.0.0.1"
 port = 9999
 
 playerOne = 1
