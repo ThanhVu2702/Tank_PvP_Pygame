@@ -596,7 +596,7 @@ my_font5 = pygame.font.SysFont('arial', 16)
 size = (605, 540) #kích thước cửa sổ game
 screen = pygame.display.set_mode(size)
 screenPIC = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/anhnen.png')
-pygame.display.set_caption("Tank PvP Group_18")              #đặt tiêu đề cửa sổ game
+pygame.display.set_caption("Version Offline Tank PvP")              #đặt tiêu đề cửa sổ game
 background = pygame.Surface(size)                 #tạo một đối tượng Surface để làm nền, sau đó "convert" nó để cải thiện hiệu suất hiển thị trên màn hình.
 background = background.convert()
 background.fill(colours['grey'])                        #màu nền của map trong game

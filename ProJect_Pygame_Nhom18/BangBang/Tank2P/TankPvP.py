@@ -273,7 +273,7 @@ def gameMenu(thisStage):
 
     
     Title = my_font.render('Tank PvP', True, (255, 0, 0)) # set up tiêu đề game màu đỏ
-    Title2 = my_font2.render('Online game', True, (255, 0, 0)) # set up tiêu đề game màu đỏ
+    Title2 = my_font2.render('Game Online', True, (255, 230, 0)) # set up tiêu đề game màu đỏ
 
 
     #tạo hình chữ nhật (text_rect) xung quanh Title, canh giữa theo chiều ngang ở trên màn hình dọc, làm Title nổi bật.
@@ -284,8 +284,8 @@ def gameMenu(thisStage):
     Start_label = my_font2.render('Start Game', True, (212,212,212)) #Tạo surface chứa văn bản "Start Game", tham số True giúp hình ảnh rõ nét hơn
     Exit_label = my_font2.render('Exit Game', True, (212,212,212))
 
-    text_rect1 = Start_label.get_rect(center=((screen.get_width() / 3)+150, (screen.get_height() / 4)+250))
-    text_rect2 = Exit_label.get_rect(center=((screen.get_width() / 3)+150, (screen.get_height() / 4)+310))
+    text_rect1 = Start_label.get_rect(center=((screen.get_width() / 3)+150, (screen.get_height() / 4)+210))
+    text_rect2 = Exit_label.get_rect(center=((screen.get_width() / 3)+150, (screen.get_height() / 4)+270))
     
         
     while thisStage:
@@ -302,11 +302,11 @@ def gameMenu(thisStage):
                 elif ev.type == pygame.MOUSEMOTION:
                     # Kiểm tra nếu chuột nằm trong vùng chứa của title
                     if text_rect1.collidepoint(ev.pos):
-                        Start_label = my_font2.render('Start Game', True, (255, 0, 0)) 
+                        Start_label = my_font2.render('Start Game', True, (0, 255, 230)) 
                     else:
                         Start_label = my_font2.render('Start Game', True, (212,212,212))  # Khôi phục màu văn bản khi chuột rời đi
                     if text_rect2.collidepoint(ev.pos):
-                        Exit_label = my_font2.render('Exit Game', True, (255, 0, 0)) 
+                        Exit_label = my_font2.render('Exit Game', True, (255, 230, 0)) 
                     else:
                         Exit_label = my_font2.render('Exit Game', True, (212,212,212))  # Khôi phục màu văn bản khi chuột rời đi
                         
@@ -332,8 +332,8 @@ def gameMenu(thisStage):
          
 
             screen.blit(screenPIC, (0,0))
-            screen.blit(Title,(screen.get_width() / 4, screen.get_height() / 4) )  # căn giữa Tank2
-            screen.blit(Title2, (screen.get_width() / 4, (screen.get_height() / 4)-20) )  # căn giữa Tank2P
+            screen.blit(Title,(screen.get_width() / 4, (screen.get_height() / 4)-60) )  # căn giữa Tank2
+            screen.blit(Title2, (screen.get_width() / 4, (screen.get_height() / 4)-90) )  # căn giữa Tank2P
 
 
             screen.blit(Start_label, text_rect1 )                 #tọa độ chuỗi Start Game
@@ -916,7 +916,7 @@ size = (960, 600) #kích thước cửa sổ game
 screen = pygame.display.set_mode(size)
 screenPIC = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/anhnen.png')
 screenPIC = pygame.transform.scale(screenPIC, size)
-pygame.display.set_caption("Tank Moba PvP")              #đặt tiêu đề cửa sổ game
+pygame.display.set_caption("Game Online Tank PvP")              #đặt tiêu đề cửa sổ game
 background = pygame.Surface(size) # tạo một đối tượng Surface để làm nền, sau đó "convert" nó để cải thiện hiệu suất hiển thị trên màn hình.
 background = background.convert()
 background.fill(colours['grey']) #màu nền của map trong game
