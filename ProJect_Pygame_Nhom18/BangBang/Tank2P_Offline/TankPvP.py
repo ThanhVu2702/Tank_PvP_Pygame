@@ -108,7 +108,7 @@ def drawPlayerHealth(player):
    - Nếu là người chơi 1, trái tim in ở góc dưới bên trái.
    - Nếu là người chơi 2, trái tim in ở góc dưới bên phải.
     '''
-    healthimage = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline_Offline/picture/blood.png')
+    healthimage = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/blood.png')
     
     p1healthpos = [60, 500]                                 #set up vị trí máu của Player1 trong trận chiến
     p1title = my_font4.render('P1', True, (0,0,0))           #tạo tiêu đề "chữ P1" với màu tương ứng
@@ -306,8 +306,8 @@ def selectionScreen(thisStage):
     Opt1 = 0
     Opt2 = 0                                   #Opt1 - Opt2 các cài đặt của player1 - player2
     
-    instructionP1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline_Offline/picture/moveP2.png')   #bảng hướng dẫn điều khiển tank
-    instructionP2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline_Offline/picture/moveP1.png')
+    instructionP1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/moveP2.png')   #bảng hướng dẫn điều khiển tank
+    instructionP2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/moveP1.png')
     
     Title = my_font3.render('Select Tank', True, (9,255,242))
     # Lấy hình chữ nhật bao quanh văn bản
@@ -519,7 +519,7 @@ def endScreen(thisStage):
     walls.empty()               
     
     #đọc từng dòng của tệp tin và tách dữ liệu bằng dấu phẩy (,) để lấy ra thông tin điểm số
-    scores = open('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline_Offline/BangTinhDiem.txt', 'r')
+    scores = open('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/BangTinhDiem.txt', 'r')
     for l in scores:
         dataFields = l.split(':')
         dataFields[-1] = dataFields[-1].strip('\n')
@@ -535,7 +535,7 @@ def endScreen(thisStage):
             scoredata['Player2'] +=1
 
     # mở tệp trong chế độ ghi (mode 'w': write), ghi điểm số được cập nhật của cả hai người chơi và sau đó đóng tệp.
-    scores = open('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline_Offline/BangTinhDiem.txt', 'w')
+    scores = open('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/BangTinhDiem.txt', 'w')
     scores.write('Player1,' + str(scoredata['Player1']) + '\n')         
     scores.write('Player2,' + str(scoredata['Player2']) + '\n')
     scores.close()
