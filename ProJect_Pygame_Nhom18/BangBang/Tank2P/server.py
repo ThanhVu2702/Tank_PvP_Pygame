@@ -3,7 +3,7 @@ import pickle
 import time
 import threading
 
-s = socket.socket()
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = "127.0.0.1"
 port = 9999
 
@@ -64,7 +64,7 @@ def handle_client(conn):
             other_conn = [c for c in playerConn if c != conn]
             if other_conn:
                 other_conn[0].sendall(data.encode())
-                time.sleep(0.5)
+                
 
         except socket.error as e:
             print("Error receiving data from client:", e)
