@@ -1,6 +1,5 @@
 import pygame
 from pygame.locals import *
-import random
 import time
 import socket
 import threading
