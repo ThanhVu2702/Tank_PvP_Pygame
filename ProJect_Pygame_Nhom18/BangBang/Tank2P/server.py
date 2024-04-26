@@ -69,9 +69,5 @@ def handle_client(conn):
         except socket.error as e:
             print("Error receiving data from client:", e)
             break
-def send_common_msg(text):
-    playerConn[0].send(text.encode())
-    playerConn[1].send(text.encode())
-    time.sleep(1)
 
 start_server()
