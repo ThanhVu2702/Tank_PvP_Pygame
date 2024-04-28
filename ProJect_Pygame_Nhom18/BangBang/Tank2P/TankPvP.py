@@ -1,6 +1,5 @@
 import pygame
 from pygame.locals import *
-import random
 import time
 import socket
 import threading
@@ -9,14 +8,17 @@ import time
 pygame.init()
 
 
-s = socket.socket()
-host = "192.168.46.105"
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+host = "127.0.0.1"
 port = 9999
 playerOne = 1
 playerTwo = 2
 bottomMsg = ""
 currentPlayer = 0
 msg =""
+
+Opt1 = 0
+Opt2 = 0 
 
 def create_thread(target):
     t = threading.Thread(target = target) #argument - target function
@@ -270,6 +272,8 @@ def gameMenu(thisStage):
 
     
     Title = my_font.render('Tank PvP', True, (255, 0, 0)) # set up tiêu đề game màu đỏ
+    Title2 = my_font2.render('Game Online', True, (255, 230, 0)) # set up tiêu đề game màu đỏ
+
 
     #tạo hình chữ nhật (text_rect) xung quanh Title, canh giữa theo chiều ngang ở trên màn hình dọc, làm Title nổi bật.
     text_rect = Title.get_rect(center=(screen.get_width() / 2, screen.get_height() / 4)) 
@@ -278,45 +282,12 @@ def gameMenu(thisStage):
 
     Start_label = my_font2.render('Start Game', True, (212,212,212)) #Tạo surface chứa văn bản "Start Game", tham số True giúp hình ảnh rõ nét hơn
     Exit_label = my_font2.render('Exit Game', True, (212,212,212))
+
+    text_rect1 = Start_label.get_rect(center=((screen.get_width() / 3)+150, (screen.get_height() / 4)+210))
+    text_rect2 = Exit_label.get_rect(center=((screen.get_width() / 3)+150, (screen.get_height() / 4)+270))
     
-    Srect = Rect(210,280,421,339)         #hiệu ứng khi trỏ chuột vào
-    Erect = Rect(245,340,380,430)
         
     while thisStage:
-            
-            x, y = pygame.mouse.get_pos()        #định vị trí của chuột trên màn hình
-            Opt = 0                                            
-            '''
-            Nếu vị trí chuột (x, y) nằm trong phạm vi của hình chữ nhật Srect
-            tức là vùng mà label "Start Game", "Exit Game"
-            '''
-            if Srect[0] < x <Srect[2] and Srect[1] < y < Srect[3]: 
-                my_font2.set_underline(True)
-                Start_label = my_font2.render('Start Game', True, (255,255,0)) # nháy màu vàng, phần gạch chân cũng vậy
-                screen.blit(Start_label, (183,280))
-                pygame.display.flip()
-
-                Opt = 1 #biến Opt được đặt thành 1, label "Start Game" đang được chọn. Khi người chơi nhấp chuột, có thể sẽ có sự kiện diễn ra tùy vào giá trị của Opt.                                                      
-                                                                                 
-            elif Erect[0] < x < Erect[2] and Erect[1] < y < Erect[3]:           
-
-                my_font2.set_bold(True)
-                Exit_label = my_font2.render('Exit Game', True, (255,0,0))
-                screen.blit(Exit_label, (170, 340))
-                pygame.display.flip()
-                
-                Opt = 2
-                
-            my_font2.set_bold(False) #tắt hiệu ứng gạch dưới
-            my_font2.set_underline(False)
-            Start_label = my_font2.render('Start Game', True, (212,212,212)) #set up màu cho label Star Game
-            Exit_label = my_font2.render('Exit Game', True, (212,212,212))
-
-            screen.blit(screenPIC, (0,0))
-            screen.blit(Title, (90,120))  # căn giữa Tank2P
-            screen.blit(Start_label, (180,280))                 #tọa độ chuỗi Start Game
-            screen.blit(Exit_label, (180, 340))            #blit: viết nội dung lên screen
-            pygame.display.flip()                          #cập nhật nội dung trên screen
             
             for ev in pygame.event.get():
                 if ev.type == QUIT:
@@ -327,13 +298,24 @@ def gameMenu(thisStage):
                     battling = False           #các biến cục bộ được trả về false để kết thúc các trạng thái
                     end = False                
                     thisStage = False
+                elif ev.type == pygame.MOUSEMOTION:
+                    # Kiểm tra nếu chuột nằm trong vùng chứa của title
+                    if text_rect1.collidepoint(ev.pos):
+                        Start_label = my_font2.render('Start Game', True, (0, 255, 230)) 
+                    else:
+                        Start_label = my_font2.render('Start Game', True, (212,212,212))  # Khôi phục màu văn bản khi chuột rời đi
+                    if text_rect2.collidepoint(ev.pos):
+                        Exit_label = my_font2.render('Exit Game', True, (255, 230, 0)) 
+                    else:
+                        Exit_label = my_font2.render('Exit Game', True, (212,212,212))  # Khôi phục màu văn bản khi chuột rời đi
+                        
                     
                 elif ev.type == MOUSEBUTTONDOWN: #kích hoạt event khi click chuột
-                    if Opt == 1:
+                    if text_rect1.collidepoint(ev.pos):
                         pygame.mixer.music.stop()
                         starting = False      #nếu chọn Start game thì nhạc sẽ dừng, kiểm soát hiển thị trên màn và chuyển tiếp vào select tank
-                        thisStage = False
-                    elif Opt == 2:
+                        thisStage = False           
+                    if text_rect2.collidepoint(ev.pos):
                         pygame.mixer.music.stop()
                         run = False
                         starting = False
@@ -341,6 +323,23 @@ def gameMenu(thisStage):
                         battling = False #nếu chọn exit game thì nhạc cũng dừng lại và đóng cửa sổ, kết thúc mọi trạng thái
                         end = False
                         thisStage = False
+                    
+         
+                
+            my_font2.set_bold(False) #tắt hiệu ứng gạch dưới
+            my_font2.set_underline(False)
+         
+
+            screen.blit(screenPIC, (0,0))
+            screen.blit(Title,(screen.get_width() / 4, (screen.get_height() / 4)-60) )  # căn giữa Tank2
+            screen.blit(Title2, (screen.get_width() / 4, (screen.get_height() / 4)-90) )  # căn giữa Tank2P
+
+
+            screen.blit(Start_label, text_rect1 )                 #tọa độ chuỗi Start Game
+            screen.blit(Exit_label, text_rect2 )            #blit: viết nội dung lên screen
+            pygame.display.flip()                          #cập nhật nội dung trên screen
+            
+            
 
 
 def selectionScreen(thisStage):
@@ -357,35 +356,41 @@ def selectionScreen(thisStage):
     pygame.mixer.music.set_volume(0.4)      #mức âm lượng được set up ở mức 40%
     pygame.mixer.music.play(-1)              #phát nhạc mãi mãi, nếu hết nhạc thì phát lại tiếp
     
-    Opt1 = 0
-    Opt2 = 0                                   #Opt1 - Opt2 các cài đặt của player1 - player2
+    global Opt1,Opt2                                  #Opt1 - Opt2 các cài đặt của player1 - player2
     
-    instructionP1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/moveP2.png')   #bảng hướng dẫn điều khiển tank
-    instructionP2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/moveP1.png')
+    
+
     
     Title = my_font3.render('Select Tank', True, (9,255,242))
-    Title2 = my_font4.render('Waiting for player', True, (9,255,242))
+    Title2 = my_font_title.render('Waiting for player', True, (9,255,242))
+
+    # text_rect1 = Start_label.get_rect(center=((screen.get_width() / 3)+150, (screen.get_height() / 4)+250))
 
     # Lấy hình chữ nhật bao quanh văn bản
-    Title_rect = Title.get_rect()
+    Title_rect = Title.get_rect(center=((screen.get_width() / 2), (screen.get_height() / 4)))
     # Canh lề giữa cho văn bản
-    Title_rect.centerx = screen.get_rect().centerx
     # in văn bản lên màn hình
     screen.blit(Title, Title_rect)
 
-    p1Title = my_font4.render('P1', True, (255,255,0)) #chữ màu vàng nền trong suốt
-    p2Title = my_font4.render('P2', True, (255,255,0))
+    Guide1 = my_font_title2.render('Use W, A, S, D keys to move your tank', True,  (9,255,242))
+    Guide2 = my_font_title2.render('W: Move Up', True,  (9,255,242))
+    Guide3 = my_font_title2.render('A: Move Left', True,  (9,255,242))
+    Guide4 = my_font_title2.render('S: Move Down', True,  (9,255,242))
+    Guide5 = my_font_title2.render('D: Move Right', True,  (9,255,242))
+    Guide6 = my_font_title2.render('Press R to shoot bullets towards your opponent.', True,  (9,255,242))
+
+
+
+    p1Title = my_font_title2.render('Player 1', True, (255,255,0)) #chữ màu vàng nền trong suốt
+    p2Title = my_font_title2.render('Player 2', True, (255,255,0))
     
-    instruction = my_font4.render('Use your left and right controls to switch between tanks.', True, (255,255,0))
+    instruction = my_font4.render('Use your A or D controls to switch between tanks.', True, (255,255,0))
     instruction2 = my_font4.render('Press ENTER to start the battle !!!', True, (255,255,0))
 
-    options = [imageUp_v1,imageUp_v2]                  #tạo danh sách chứa các ảnh của 2 phiên bản tank 
+    options = [imageUp_v1_2,imageUp_v2_2]                  #tạo danh sách chứa các ảnh của 2 phiên bản tank 
     stats = {0:['3', '6', '3'], 1:['6','3','1']}
     
-    DisplaySurf = pygame.Surface((80,80))
-    DisplaySurf.fill((255,212,255))                 #tạo ô nền cho tank
-    DisplaySurf2 = pygame.Surface((80,80))
-    DisplaySurf2.fill((255,212,255))
+    
 
    
             
@@ -399,21 +404,33 @@ def selectionScreen(thisStage):
         if "1" in bottomMsg:
             currentPlayer = 1
             print( "You are player 1")
-            Title2 = my_font4.render('You are player 1', True, (9,255,242))
+            Title2 = my_font_title.render('You are player 1', True, (255,255,0))
             screen.blit(Title2, (170, 120)) # tọa độ dòng chữ Select Tank
 
         else:
             currentPlayer =2
             print( "You are player 2")
-            Title2 = my_font4.render('You are player 2', True, (9,255,242))
+            Title2 = my_font_title.render('You are player 2', True, (255,255,0))
             screen.blit(Title2, (170, 120)) # tọa độ dòng chữ Select Tank
 
             # s.close()
     except socket.error as e:
-        Title2 = my_font4.render('server error', True, (9,255,242))
+        Title2 = my_font_title.render('server error', True, (255,255,0))
         screen.blit(Title2, (170, 120)) # tọa độ dòng chữ Select Tank 
 
     create_thread(receive_msg)
+
+
+    DisplaySurf = pygame.Surface((120,120))
+    if currentPlayer == 1:
+        DisplaySurf.fill((255,255,0))
+    else:
+        DisplaySurf.fill((255,212,255))                 #tạo ô nền cho tank
+    DisplaySurf2 = pygame.Surface((120,120))
+    if currentPlayer == 2:
+        DisplaySurf2.fill((255,255,0))
+    else:
+        DisplaySurf2.fill((255,212,255))
 
     
 
@@ -518,38 +535,48 @@ def selectionScreen(thisStage):
 
 
         
-        p1statsHealth = my_font5.render('Health: ' + stats[Opt1][0], True, (255,212,212))
-        p1statsSpeed = my_font5.render('Speed: ' + stats[Opt1][1],True, (255,212,212))
-        p1statsReload = my_font5.render('Reload: ' + stats[Opt1][2], True, (255,212,212))   #these renders needs to be in the loop because as users switch
-        p2statsHealth = my_font5.render('Health: ' + stats[Opt2][0], True, (255,212,212))   #between tanks, the stats info needs to update
-        p2statsSpeed = my_font5.render('Speed: ' + stats[Opt2][1],True, (255,212,212))
-        p2statsReload = my_font5.render('Reload: ' + stats[Opt2][2], True, (255,212,212))
+        p1statsHealth = my_font_title2.render('Health: ' + stats[Opt1][0], True, (255,212,212))
+        p1statsSpeed = my_font_title2.render('Speed: ' + stats[Opt1][1],True, (255,212,212))
+        p1statsReload = my_font_title2.render('Reload: ' + stats[Opt1][2], True, (255,212,212))   #these renders needs to be in the loop because as users switch
+        p2statsHealth = my_font_title2.render('Health: ' + stats[Opt2][0], True, (255,212,212))   #between tanks, the stats info needs to update
+        p2statsSpeed = my_font_title2.render('Speed: ' + stats[Opt2][1],True, (255,212,212))
+        p2statsReload = my_font_title2.render('Reload: ' + stats[Opt2][2], True, (255,212,212))
         
         screen.blit(screenPIC, (0,0))
-        screen.blit(Title, (170, 70)) # tọa độ dòng chữ Select Tank
-        screen.blit(Title2, (170, 120)) # tọa độ dòng chữ Select Tank
+        screen.blit(Title, (370, 70)) # tọa độ dòng chữ Select Tank
+        screen.blit(Title2, (370, 120)) # tọa độ dòng chữ Select Tank
 
-        screen.blit(p1Title, (160, 150))
-        screen.blit(p2Title, (420, 150))
+        screen.blit(p1Title, (330, 170))
+        screen.blit(p2Title, (590, 170))
 
-        screen.blit(p1statsHealth, (45,200)) 
-        screen.blit(p1statsSpeed, (45,220))  
-        screen.blit(p1statsReload, (45,240)) 
+        screen.blit(p1statsHealth, (225,220)) 
+        screen.blit(p1statsSpeed, (225,240))  
+        screen.blit(p1statsReload, (225,260)) 
 
-        screen.blit(p2statsHealth, (500,200)) #tọa độ chỉ số máu của player2
-        screen.blit(p2statsSpeed, (500,220)) #tọa độ chỉ tốc độ của player2
-        screen.blit(p2statsReload, (500,240)) #tọa độ chỉ số tốc độ bắn của player2
+        screen.blit(p2statsHealth, (750,220)) #tọa độ chỉ số máu của player2
+        screen.blit(p2statsSpeed, (750,240)) #tọa độ chỉ tốc độ của player2
+        screen.blit(p2statsReload, (750,260)) #tọa độ chỉ số tốc độ bắn của player2
 
-        screen.blit(DisplaySurf, (135, 189))  #tọa độ ô trắng
-        screen.blit(DisplaySurf2, (390, 189))
-        screen.blit(options[Opt1], (160, 220)) # tọa độ hình tank trong ô màu trắng
-        screen.blit(options[Opt2], (415, 220))
+        screen.blit(DisplaySurf, (335, 209))  #tọa độ ô trắng
+        screen.blit(DisplaySurf2, (590, 209))
+        screen.blit(options[Opt1], (370, 240)) # tọa độ hình tank trong ô màu trắng
+        screen.blit(options[Opt2], (625, 240))
 
-        screen.blit(instructionP1, (70, 290))
-        screen.blit(instructionP2, (330, 290))
+        # screen.blit(instructionP1, (270, 310))
+        # screen.blit(instructionP2, (530, 310))
+        screen.blit(Guide1, (330, 350))
+        screen.blit(Guide2, (360, 370))
+        screen.blit(Guide3, (360, 390))
+        screen.blit(Guide4, (360, 410))
+        screen.blit(Guide5, (360, 430))
+        screen.blit(Guide6, (330, 450))
 
-        screen.blit(instruction, (70, 500)) #tọa độ của dòng chữ "Use your left and right controls..."
-        screen.blit(instruction2, (170, 520))
+
+
+
+
+        screen.blit(instruction, (300, 520)) #tọa độ của dòng chữ "Use your left and right controls..."
+        screen.blit(instruction2, (370, 540))
         pygame.display.flip()
 
 ################################# SET UP TRẬN ĐẤU ########################################################################
@@ -568,6 +595,11 @@ def battleScreen(thisStage):
     pygame.mixer.music.load(musicList[2])    
     pygame.mixer.music.set_volume(0.4)
     pygame.mixer.music.play(-1)
+
+    p1 = my_font_title2.render('Player 1', True,  (9,255,242))
+    p2 = my_font_title2.render('Player 2', True,  (9,255,242))
+
+
     
     global msg
     timer = 0  #Khởi tạo biến đếm để điều chỉnh thời gian nghỉ giữa các lần bắn của người chơi
@@ -758,7 +790,19 @@ def battleScreen(thisStage):
                 bullet(player1)
                 timer1 = 0
             
+        
         screen.blit(background, (0,0)) #in background đè lên toàn bộ screen
+        screen.blit(p1, (700, 80))
+        screen.blit(p2, (700, 250))
+        if Opt1 == 0:
+            screen.blit(imageUp_v1_2, (700, 110))
+        else :
+            screen.blit(imageUp_v2_2, (700, 110))
+        if Opt2 == 0:
+            screen.blit(imageUp_v1_2, (700, 280))
+        else :
+            screen.blit(imageUp_v2_2, (700, 280))
+
         walls.draw(screen)
         players.draw(screen)
         bulletgroup.draw(screen) #các viên đạn được bắn ra
@@ -862,10 +906,16 @@ my_font3 = pygame.font.SysFont('andalus', 72)      #setup Font chữ
 my_font4 = pygame.font.SysFont('candara', 20)
 my_font5 = pygame.font.SysFont('arial', 16)
 
-size = (605, 540) #kích thước cửa sổ game
+my_font_title = pygame.font.SysFont('moolboran', 50)
+my_font_title2 = pygame.font.SysFont('moolboran', 30)
+
+
+
+size = (960, 600) #kích thước cửa sổ game
 screen = pygame.display.set_mode(size)
 screenPIC = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/anhnen.png')
-pygame.display.set_caption("Tank Moba PvP")              #đặt tiêu đề cửa sổ game
+screenPIC = pygame.transform.scale(screenPIC, size)
+pygame.display.set_caption("Game Online Tank PvP")              #đặt tiêu đề cửa sổ game
 background = pygame.Surface(size) # tạo một đối tượng Surface để làm nền, sau đó "convert" nó để cải thiện hiệu suất hiển thị trên màn hình.
 background = background.convert()
 background.fill(colours['grey']) #màu nền của map trong game
@@ -879,14 +929,29 @@ tiles = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tuong.p
 
 explosion = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/vuno.png')
 imageUp_v1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank1 up.png')
+imageUp_v1 = pygame.transform.scale(imageUp_v1, (30, 30))
+imageUp_v1_2 = pygame.transform.scale(imageUp_v1, (50, 50))
+
 imageDown_v1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank1 down.png')
-imageRight_v1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank1 right.png')     #load ảnh khi tank thay đổi hướng khi di chuyển
+imageDown_v1 = pygame.transform.scale(imageDown_v1, (30, 30))
+imageRight_v1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank1 right.png')
+imageRight_v1 = pygame.transform.scale(imageRight_v1, (30, 30))
+     #load ảnh khi tank thay đổi hướng khi di chuyển
 imageLeft_v1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank1 left.png')
+imageLeft_v1 = pygame.transform.scale(imageLeft_v1, (30, 30))
+
 
 imageUp_v2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank2 up.png')
+imageUp_v2 = pygame.transform.scale(imageUp_v2, (30, 30))
+imageUp_v2_2 = pygame.transform.scale(imageUp_v2, (50, 50))
+
 imageDown_v2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank2 down.png')
+imageDown_v2 = pygame.transform.scale(imageDown_v2, (30, 30))
 imageRight_v2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank2 right.png')
+imageRight_v2 = pygame.transform.scale(imageRight_v2, (30, 30))
 imageLeft_v2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank2 left.png')
+imageLeft_v2 = pygame.transform.scale(imageLeft_v2, (30, 30))
+
 
 #Hai danh sách chứa hình ảnh đại diện cho các version khác nhau của người chơi và các nhiều hướng khác nhau
 ver1 = [imageUp_v1,imageDown_v1,imageRight_v1,imageLeft_v1]

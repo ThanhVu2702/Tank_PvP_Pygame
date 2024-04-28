@@ -15,7 +15,7 @@ def writeScorefile():
     '''
     haveOne = False
     try:                                #Chương trình sẽ mở tệp tin này
-        open('ProJect_Pygame_Nhom18/BangBang/Tank2P/BangTinhDiem.txt', 'r')
+        open('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/BangTinhDiem.txt', 'r')
         haveOne = True
     finally:
         if not haveOne:                 #Nếu không có tệp tin, chương trình sẽ tạo một tệp mới
@@ -108,7 +108,7 @@ def drawPlayerHealth(player):
    - Nếu là người chơi 1, trái tim in ở góc dưới bên trái.
    - Nếu là người chơi 2, trái tim in ở góc dưới bên phải.
     '''
-    healthimage = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/blood.png')
+    healthimage = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/blood.png')
     
     p1healthpos = [60, 500]                                 #set up vị trí máu của Player1 trong trận chiến
     p1title = my_font4.render('P1', True, (0,0,0))           #tạo tiêu đề "chữ P1" với màu tương ứng
@@ -261,7 +261,7 @@ def gameMenu(thisStage):
             Exit_label = my_font2.render('Exit Game', True, (212,212,212))
 
             screen.blit(screenPIC, (0,0))
-            screen.blit(Title, (90,120))  # căn giữa Tank2P
+            screen.blit(Title, (90,120))  # căn giữa Tank2P_Offline
             screen.blit(Start_label, (180,280))                 #tọa độ chuỗi Start Game
             screen.blit(Exit_label, (180, 340))            #blit: viết nội dung lên screen
             pygame.display.flip()                          #cập nhật nội dung trên screen
@@ -306,8 +306,8 @@ def selectionScreen(thisStage):
     Opt1 = 0
     Opt2 = 0                                   #Opt1 - Opt2 các cài đặt của player1 - player2
     
-    instructionP1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/moveP2.png')   #bảng hướng dẫn điều khiển tank
-    instructionP2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/moveP1.png')
+    instructionP1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/moveP2.png')   #bảng hướng dẫn điều khiển tank
+    instructionP2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/moveP1.png')
     
     Title = my_font3.render('Select Tank', True, (9,255,242))
     # Lấy hình chữ nhật bao quanh văn bản
@@ -519,7 +519,7 @@ def endScreen(thisStage):
     walls.empty()               
     
     #đọc từng dòng của tệp tin và tách dữ liệu bằng dấu phẩy (,) để lấy ra thông tin điểm số
-    scores = open('ProJect_Pygame_Nhom18/BangBang/Tank2P/BangTinhDiem.txt', 'r')
+    scores = open('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/BangTinhDiem.txt', 'r')
     for l in scores:
         dataFields = l.split(':')
         dataFields[-1] = dataFields[-1].strip('\n')
@@ -535,7 +535,7 @@ def endScreen(thisStage):
             scoredata['Player2'] +=1
 
     # mở tệp trong chế độ ghi (mode 'w': write), ghi điểm số được cập nhật của cả hai người chơi và sau đó đóng tệp.
-    scores = open('ProJect_Pygame_Nhom18/BangBang/Tank2P/BangTinhDiem.txt', 'w')
+    scores = open('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/BangTinhDiem.txt', 'w')
     scores.write('Player1,' + str(scoredata['Player1']) + '\n')         
     scores.write('Player2,' + str(scoredata['Player2']) + '\n')
     scores.close()
@@ -573,7 +573,7 @@ def endScreen(thisStage):
                     scoredata['Player1'] = 0        #nhấn phím R để reset bảng điểm
                     scoredata['Player2'] = 0
 
-    scores = open('ProJect_Pygame_Nhom18/BangBang/Tank2P/BangTinhDiem.txt', 'w')
+    scores = open('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/BangTinhDiem.txt', 'w')
     scores.write('Player1: ' + str(scoredata['Player1']) + '\n')
     scores.write('Player2: ' + str(scoredata['Player2']) + '\n')         #update kết quả trong fie txt
     scores.close()
@@ -595,29 +595,29 @@ my_font5 = pygame.font.SysFont('arial', 16)
 ################################# SET UP CỬA SỔ GAME ######################################################################
 size = (605, 540) #kích thước cửa sổ game
 screen = pygame.display.set_mode(size)
-screenPIC = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/anhnen.png')
-pygame.display.set_caption("Tank PvP Group_18")              #đặt tiêu đề cửa sổ game
+screenPIC = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/anhnen.png')
+pygame.display.set_caption("Version Offline Tank PvP")              #đặt tiêu đề cửa sổ game
 background = pygame.Surface(size)                 #tạo một đối tượng Surface để làm nền, sau đó "convert" nó để cải thiện hiệu suất hiển thị trên màn hình.
 background = background.convert()
 background.fill(colours['grey'])                        #màu nền của map trong game
 
-explode = pygame.mixer.Sound('ProJect_Pygame_Nhom18/BangBang/Tank2P/bum.ogg')
-shoot = pygame.mixer.Sound('ProJect_Pygame_Nhom18/BangBang/Tank2P/music/fireMusic.mp3')          
-musicList = ['ProJect_Pygame_Nhom18/BangBang/Tank2P/music/endMusic.mp3','ProJect_Pygame_Nhom18/BangBang/Tank2P/music/selectSong.mp3','ProJect_Pygame_Nhom18/BangBang/Tank2P/mbattle.ogg','ProJect_Pygame_Nhom18/BangBang/Tank2P/music/endMusic.mp3']
+explode = pygame.mixer.Sound('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/bum.ogg')
+shoot = pygame.mixer.Sound('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/music/fireMusic.mp3')          
+musicList = ['ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/music/endMusic.mp3','ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/music/selectSong.mp3','ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/mbattle.ogg','ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/music/endMusic.mp3']
 
-maps = ['ProJect_Pygame_Nhom18/BangBang/Tank2P/map1.txt', 'ProJect_Pygame_Nhom18/BangBang/Tank2P/map2.txt', 'ProJect_Pygame_Nhom18/BangBang/Tank2P/map3.txt']
-tiles = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tuong.png')
+maps = ['ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/map1.txt', 'ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/map2.txt', 'ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/map3.txt']
+tiles = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/tuong.png')
 
-explosion = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/vuno.png')
-imageUp_v1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank1 up.png')
-imageDown_v1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank1 down.png')
-imageRight_v1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank1 right.png')     #load ảnh khi tank thay đổi hướng khi di chuyển
-imageLeft_v1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank1 left.png')
+explosion = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/vuno.png')
+imageUp_v1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/tank1 up.png')
+imageDown_v1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/tank1 down.png')
+imageRight_v1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/tank1 right.png')     #load ảnh khi tank thay đổi hướng khi di chuyển
+imageLeft_v1 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/tank1 left.png')
 
-imageUp_v2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank2 up.png')
-imageDown_v2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank2 down.png')
-imageRight_v2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank2 right.png')
-imageLeft_v2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P/picture/tank2 left.png')
+imageUp_v2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/tank2 up.png')
+imageDown_v2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/tank2 down.png')
+imageRight_v2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/tank2 right.png')
+imageLeft_v2 = pygame.image.load('ProJect_Pygame_Nhom18/BangBang/Tank2P_Offline/picture/tank2 left.png')
 
 ################################## ĐỊNH DẠNG TANK ##################################################################################
 #Hai danh sách chứa hình ảnh đại diện cho các version khác nhau của người chơi và các nhiều hướng khác nhau
