@@ -232,4 +232,4 @@ Dừng phát nhạc nền.
 Kết thúc hàm và trò chơi kết thúc.
 
 *********************************************************************************************************
-Báo cáo: https://github.com/ThanhVu2702/Tank_PvP_Pygame/blob/main/ProJect_Pygame_Nhom18/BangBang/document/BaoCao_Nhom18.pdf
+Tài liệu: https://github.com/ThanhVu2702/Tank_PvP_Pygame/blob/main/ProJect_Pygame_Nhom18/BangBang/document/BaoCao_Nhom18.pdf
