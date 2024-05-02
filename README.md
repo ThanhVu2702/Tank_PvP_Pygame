@@ -6,7 +6,11 @@ Tham gia ngay vào tựa game PvP của nhóm mình và trải nxuấtệm cảm
 
 Web Demo: https://thanhvu2702.github.io/web_intro_ProJ_Pygame/
 
-Tài liệu & source LATEX: https://github.com/ThanhVu2702/Tank_PvP_Pygame/blob/main/ProJect_Pygame_Nhom18/BangBang/document/BaoCao_Nhom18.pdf
+Tài liệu & source LATEX: 
+
+https://github.com/ThanhVu2702/Tank_PvP_Pygame/blob/main/ProJect_Pygame_Nhom18/BangBang/document/BaoCao_Nhom18.pdf
+
+https://github.com/ThanhVu2702/Tank_PvP_Pygame/tree/main/ProJect_Pygame_Nhom18/BangBang/document
 
  
 Install instruction & extension for VSCode:
