@@ -10,7 +10,7 @@ Tài liệu & source LATEX:
 
 https://github.com/ThanhVu2702/Tank_PvP_Pygame/blob/main/ProJect_Pygame_Nhom18/BangBang/document/BaoCao_Nhom18.pdf
 
-https://github.com/ThanhVu2702/Tank_PvP_Pygame/tree/main/ProJect_Pygame_Nhom18/BangBang/document
+https://github.com/ThanhVu2702/Tank_PvP_Pygame/blob/main/ProJect_Pygame_Nhom18/BangBang/document/BaoCao_Nhom18.zip
 
  
 Install instruction & extension for VSCode:
